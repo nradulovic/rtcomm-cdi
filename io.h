@@ -31,6 +31,11 @@
 #define ACQUNITY_AUX_CHANNELS           4
 #define ACQUNITY_ACQ_CHANNELS           3
 
+#define ACQ_ADC_SIGNED_MAX				8388607
+#define ACQ_ADC_SIGNED_MIN				-8388608
+#define ACQ_ADC_UNSIGNED_MAX			16777215
+#define ACQ_ADC_UNSIGNED_MIN			0
+
 #define ACQUNITY_CHANNEL_X              0
 #define ACQUNITY_CHANNEL_Y              1
 #define ACQUNITY_CHANNEL_Z              2
