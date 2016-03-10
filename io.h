@@ -121,9 +121,9 @@
 #define CMD_SET_SYSTEM_STOP             0x02
 #define ACQ_CFG_SIZE_TO_ENUM(size)      ((size + 15u) / 16u)
 
-#define TRIG_TYPE_INTERNAL_OUT          0
-#define TRIG_TYPE_EXTERNAL_CONTINUOUS   1
-#define TRIG_TYPE_EXTERNAL_ONESHOT      2
+#define TRIG_MODE_OUT          			0
+#define TRIG_MODE_IN_CONTINUOUS   		1
+#define TRIG_MODE_IN_SINGLE_SHOT      	2
 
 __attribute__((packed))
 struct acqunity_in
