@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+#include "port/compiler.h"
+
 /*
  *  MSB                         LSB
  * +---+---+---+---+---+---+---+---+
@@ -125,7 +127,7 @@
 #define TRIG_MODE_IN_CONTINUOUS   		1
 #define TRIG_MODE_IN_SINGLE_SHOT      	2
 
-__attribute__((packed))
+PORT_C_PACKED
 struct acqunity_in
 {
     uint8_t                     acq_channel_mask;
@@ -145,14 +147,14 @@ struct acqunity_in
     uint32_t                    pullback_time;
 };
 
-__attribute__((packed))
+PORT_C_PACKED
 struct acqunity_out
 {
     uint32_t                    aux_val[4];
     uint8_t                     status[4];
 };
 
-__attribute__((packed))
+PORT_C_PACKED
 struct acqunity_sample
 {
     uint32_t                    channel[3];
