@@ -127,8 +127,8 @@
 #define TRIG_MODE_IN_CONTINUOUS   		1
 #define TRIG_MODE_IN_SINGLE_SHOT      	2
 
-PORT_C_PACKED
-struct acqunity_in
+
+struct PORT_C_PACKED acqunity_in
 {
     uint8_t                     acq_channel_mask;
     uint8_t                     acq_size;
@@ -147,15 +147,15 @@ struct acqunity_in
     uint32_t                    pullback_time;
 };
 
-PORT_C_PACKED
-struct acqunity_out
+
+struct PORT_C_PACKED acqunity_out
 {
     uint32_t                    aux_val[4];
     uint8_t                     status[4];
 };
 
-PORT_C_PACKED
-struct acqunity_sample
+
+struct PORT_C_PACKED acqunity_sample
 {
     uint32_t                    channel[3];
     uint32_t                    metadata;
