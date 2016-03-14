@@ -127,6 +127,9 @@
 #define TRIG_MODE_IN_CONTINUOUS   		1
 #define TRIG_MODE_IN_SINGLE_SHOT      	2
 
+#define ACQ_MODE_CONTINUOUS				0
+#define ACQ_MODE_REQUEST				1
+
 
 struct PORT_C_PACKED acqunity_in
 {
