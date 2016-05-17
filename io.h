@@ -123,8 +123,23 @@
 #define CMD_SET_SYSTEM_STOP             0x02
 #define ACQ_CFG_SIZE_TO_ENUM(size)      ((size + 15u) / 16u)
 
+/* Trigger signal is output on a pin
+ * There are two available modes depending on the sample rate speed:
+ *  - if sample speed is low (less than 15kSPS) then trigger rising edge is
+ *  	generated just at the beginning of the samples read. After calculated
+ *  	time a falling edge is generated through a hardware timer.
+ *  - if sample speed is high (15-30 kSPS) then the rising edge is generated at
+ *  	start of reading and the falling edge is generated at end of reading of
+ *  	all bytes from ADCs.
+ */
 #define TRIG_MODE_OUT          			0
+
+/* This trigger means that after each trigger a sample is taken.
+ */
 #define TRIG_MODE_IN_CONTINUOUS   		1
+
+/* This trigger triggers only once and then it will continue on its own.
+ */
 #define TRIG_MODE_IN_SINGLE_SHOT      	2
 
 #define ACQ_MODE_CONTINUOUS				0
