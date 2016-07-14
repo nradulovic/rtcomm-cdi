@@ -39,9 +39,9 @@
 #define ACQ_ADC_UNSIGNED_MIN			0u
 #define ACQ_ADC_FS                      (ACQ_ADC_UNSIGNED_MAX + 1u)
 
-#define ACQUNITY_CHANNEL_X              0
-#define ACQUNITY_CHANNEL_Y              1
-#define ACQUNITY_CHANNEL_Z              2
+#define ACQ_CHANNEL_X              		0
+#define ACQ_CHANNEL_Y              		1
+#define ACQ_CHANNEL_Z              		2
 
 #define ADS_REG_STATUS                  0x00
 #define ADS_REG_MUX                     0x01
@@ -173,10 +173,10 @@ struct PORT_C_PACKED acqunity_out
 };
 
 
-struct PORT_C_PACKED acqunity_sample
+struct PORT_C_PACKED acq_sample
 {
-    uint32_t                    channel[3];
-    uint32_t                    metadata;
+    uint32_t                    _channel[3];
+    uint32_t                    _metadata;
 };
 
 
@@ -186,5 +186,124 @@ struct PORT_C_PACKED acqunity_sample
  */
 #define CMD_GET_DEV_MEM                 0xf0
 
+/*
+ * METADATA
+ *
+ *  +---+---+--------------------------+
+ *  | G | T |        TIMESTAMP         |
+ *  +---+---+--------------------------+
+ *   | | | | |                        |
+ *   | | | | |                        +---- 0
+ *   | | | | +----------------------------- 25
+ *   | | | +------------------------------- 26
+ *   | | +--------------------------------- 28
+ *   | +----------------------------------- 29
+ *   +------------------------------------- 31
+ */
+
+#define SAMPLE_GAIN_Pos					(29u)
+#define SAMPLE_GAIN_Mask				(0x7u << SAMPLE_GAIN_Pos)
+#define SAMPLE_TYPE_Pos					(26)
+#define SAMPLE_TYPE_Mask				(0x7u << SAMPLE_TYPE_Pos)
+#define SAMPLE_TIMESTAMP_Pos			(0)
+#define SAMPLE_TIMESTAMP_Mask			(0x3ffffff << SAMPLE_TIMESTAMP_Pos)
+
+#define SAMPLE_TYPE_INT					(0x0)
+#define SAMPLE_TYPE_FLOAT				(0x1)
+
+PORT_C_INLINE
+void sample_init(struct acq_sample * sample, uint32_t value, uint32_t channel)
+{
+	sample->_channel[channel] = value;
+}
+
+PORT_C_INLINE
+uint32_t sample_raw(const struct acq_sample * sample, uint32_t channel)
+{
+	return (sample->_channel[channel]);
+}
+
+PORT_C_INLINE
+void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
+{
+	if (value < 0) {
+		sample->_channel[channel] = (uint32_t)((int32_t)(ACQ_ADC_FS / 2u) - value);
+	} else {
+		sample->_channel[channel] = (uint32_t)value;
+	}
+}
+
+PORT_C_INLINE
+int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
+{
+	uint32_t 					value = sample->_channel[channel];
+
+    if (value >= (ACQ_ADC_FS / 2)) {
+
+        return ((int32_t)(ACQ_ADC_FS / 2u) - (int32_t)value);
+    } else {
+        return ((int32_t)value);
+    }
+}
+
+PORT_C_INLINE
+void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
+{
+	float * 					fvalue = (float *)&sample->_channel[channel];
+
+	*fvalue = value;
+}
+
+PORT_C_INLINE
+float sample_get_float(const struct acq_sample * sample, uint32_t channel)
+{
+	return (*(const float *)&sample->_channel[channel]);
+}
+
+PORT_C_INLINE
+void sample_set_gain(struct acq_sample * sample, uint32_t gain)
+{
+	gain <<= SAMPLE_GAIN_Pos;
+
+	sample->_metadata &= ~SAMPLE_GAIN_Mask;
+	sample->_metadata |= gain;
+}
+
+PORT_C_INLINE
+uint32_t sample_get_gain(const struct acq_sample * sample)
+{
+	return (sample->_metadata >> SAMPLE_GAIN_Pos);
+}
+
+PORT_C_INLINE
+void sample_set_type(struct acq_sample * sample, uint32_t type)
+{
+	type <<= SAMPLE_TYPE_Pos;
+	type &= SAMPLE_TYPE_Mask;
+
+	sample->_metadata &= ~SAMPLE_TYPE_Mask;
+	sample->_metadata |= type;
+}
+
+PORT_C_INLINE
+uint32_t sample_get_type(const struct acq_sample * sample)
+{
+	return ((sample->_metadata & SAMPLE_TYPE_Mask) >> SAMPLE_TYPE_Pos);
+}
+
+PORT_C_INLINE
+void sample_set_timestamp(struct acq_sample * sample, uint32_t timestamp)
+{
+	timestamp &= SAMPLE_TIMESTAMP_Mask;
+
+	sample->_metadata &= ~SAMPLE_TIMESTAMP_Mask;
+	sample->_metadata |= timestamp;
+}
+
+PORT_C_INLINE
+uint32_t sample_get_timestamp(const struct acq_sample * sample)
+{
+	return (sample->_metadata & SAMPLE_TIMESTAMP_Mask);
+}
 
 #endif /* APPLICATION_INCLUDE_ACQUNITY_COMMANDS_H_ */
