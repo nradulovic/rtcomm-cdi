@@ -182,7 +182,7 @@ struct PORT_C_PACKED acqunity_out
 
 struct PORT_C_PACKED acq_sample
 {
-    uint32_t                    _channel[3];
+    int32_t                     _channel[3];
     uint32_t                    _metadata;
 };
 
@@ -213,44 +213,37 @@ struct PORT_C_PACKED acq_sample
 #define SAMPLE_TYPE_Pos					(26)
 #define SAMPLE_TYPE_Mask				(0x7u << SAMPLE_TYPE_Pos)
 #define SAMPLE_TIMESTAMP_Pos			(0)
-#define SAMPLE_TIMESTAMP_Mask			(0x3ffffff << SAMPLE_TIMESTAMP_Pos)
+#define SAMPLE_TIMESTAMP_Mask			(0x3ffffffu << SAMPLE_TIMESTAMP_Pos)
 
 #define SAMPLE_TYPE_INT					(0x0)
 #define SAMPLE_TYPE_FLOAT				(0x1)
 
 PORT_C_INLINE
-void sample_init(struct acq_sample * sample, uint32_t value, uint32_t channel)
+int32_t io_raw_adc_to_int(uint32_t raw_data)
 {
-	sample->_channel[channel] = value;
+    if (raw_data & 0x800000u) {
+    	return ((int32_t)(raw_data | 0xff000000u));
+    } else {
+    	return ((int32_t)raw_data);
+    }
 }
 
 PORT_C_INLINE
-uint32_t sample_raw(const struct acq_sample * sample, uint32_t channel)
+void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel)
 {
-	return (sample->_channel[channel]);
+	sample->_channel[channel] = io_raw_adc_to_int(raw_data);
 }
 
 PORT_C_INLINE
 void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 {
-	if (value < 0) {
-		sample->_channel[channel] = (uint32_t)((int32_t)(ACQ_ADC_FS / 2u) - value);
-	} else {
-		sample->_channel[channel] = (uint32_t)value;
-	}
+	sample->_channel[channel] = value;
 }
 
 PORT_C_INLINE
 int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 {
-	uint32_t 					value = sample->_channel[channel];
-
-    if (value >= (ACQ_ADC_FS / 2)) {
-
-        return ((int32_t)(ACQ_ADC_FS / 2u) - (int32_t)value);
-    } else {
-        return ((int32_t)value);
-    }
+	return (sample->_channel[channel]);
 }
 
 PORT_C_INLINE
