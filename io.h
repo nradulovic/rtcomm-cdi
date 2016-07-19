@@ -166,6 +166,13 @@ struct PORT_C_PACKED acqunity_in
 };
 
 
+enum process_data_mode  // nacin prikaza prikupljenih podataka
+{
+    SERVICE_DATA,
+    USER_DATA,
+};
+
+
 struct PORT_C_PACKED acqunity_out
 {
     uint32_t                    aux_val[4];
