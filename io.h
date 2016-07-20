@@ -235,6 +235,12 @@ void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel
 }
 
 PORT_C_INLINE
+void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
+{
+	dst->_metadata = src->_metadata;
+}
+
+PORT_C_INLINE
 void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 {
 	sample->_channel[channel] = value;
