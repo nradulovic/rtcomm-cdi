@@ -10,8 +10,7 @@
 
 #include <stdint.h>
 
-#include "port/compiler.h"
-#include "port/core.h"
+#include "base/bitop.h"
 
 /*
  *  MSB                         LSB
@@ -225,15 +224,7 @@ struct PORT_C_PACKED acq_sample
 #define SAMPLE_TYPE_INT					(0x0)
 #define SAMPLE_TYPE_FLOAT				(0x1)
 
-PORT_C_INLINE
-int32_t io_raw_adc_to_int(uint32_t raw_data)
-{
-    if (raw_data & 0x800000u) {
-    	return ((int32_t)(raw_data | 0xff000000u));
-    } else {
-    	return ((int32_t)raw_data);
-    }
-}
+#define io_raw_adc_to_int(raw_data)		n_ext_i24((int32_t)(raw_data))
 
 
 
