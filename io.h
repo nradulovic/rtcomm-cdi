@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "port/compiler.h"
+#include "port/core.h"
 
 /*
  *  MSB                         LSB
@@ -206,6 +207,12 @@ struct PORT_C_PACKED acq_sample
  *   | | +--------------------------------- 28
  *   | +----------------------------------- 29
  *   +------------------------------------- 31
+ *
+ *   G - gain [31:29] - 3 bits
+ *   T - type [28:26] - 3 bits
+ *    - SAMPLE_TYPE_INT
+ *    - SAMPLE_TYPE_FLOAT
+ *   TIMESTAMP - timestamp [25:0] - 26 bits
  */
 
 #define SAMPLE_GAIN_Pos					(29u)
@@ -228,11 +235,15 @@ int32_t io_raw_adc_to_int(uint32_t raw_data)
     }
 }
 
+
+
 PORT_C_INLINE
 void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel)
 {
 	sample->_channel[channel] = io_raw_adc_to_int(raw_data);
 }
+
+
 
 PORT_C_INLINE
 void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
@@ -240,17 +251,23 @@ void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
 	dst->_metadata = src->_metadata;
 }
 
+
+
 PORT_C_INLINE
 void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 {
 	sample->_channel[channel] = value;
 }
 
+
+
 PORT_C_INLINE
 int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 {
 	return (sample->_channel[channel]);
 }
+
+
 
 PORT_C_INLINE
 void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
@@ -260,11 +277,15 @@ void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 	*fvalue = value;
 }
 
+
+
 PORT_C_INLINE
 float sample_get_float(const struct acq_sample * sample, uint32_t channel)
 {
 	return (*(const float *)&sample->_channel[channel]);
 }
+
+
 
 PORT_C_INLINE
 void sample_set_gain(struct acq_sample * sample, uint32_t gain)
@@ -275,12 +296,22 @@ void sample_set_gain(struct acq_sample * sample, uint32_t gain)
 	sample->_metadata |= gain;
 }
 
+
+
 PORT_C_INLINE
 uint32_t sample_get_gain(const struct acq_sample * sample)
 {
 	return (sample->_metadata >> SAMPLE_GAIN_Pos);
 }
 
+
+
+/**@brief		Set the sample type
+ * @param 		sample - Pointer to acq_sample structure
+ * @param 		type
+ * 				- SAMPLE_TYPE_INT
+ * 				- SAMPLE_TYPE_FLOAT
+ */
 PORT_C_INLINE
 void sample_set_type(struct acq_sample * sample, uint32_t type)
 {
@@ -291,11 +322,21 @@ void sample_set_type(struct acq_sample * sample, uint32_t type)
 	sample->_metadata |= type;
 }
 
+
+
+/**@brief		Get the sample type
+ * @param 		sample - Pointer to acq_sample structure
+ * @return
+ *  @retval		SAMPLE_TYPE_INT
+ *  @retval		SAMPLE_TYPE_FLOAT
+ */
 PORT_C_INLINE
 uint32_t sample_get_type(const struct acq_sample * sample)
 {
 	return ((sample->_metadata & SAMPLE_TYPE_Mask) >> SAMPLE_TYPE_Pos);
 }
+
+
 
 PORT_C_INLINE
 void sample_set_timestamp(struct acq_sample * sample, uint32_t timestamp)
@@ -305,6 +346,8 @@ void sample_set_timestamp(struct acq_sample * sample, uint32_t timestamp)
 	sample->_metadata &= ~SAMPLE_TIMESTAMP_Mask;
 	sample->_metadata |= timestamp;
 }
+
+
 
 PORT_C_INLINE
 uint32_t sample_get_timestamp(const struct acq_sample * sample)
