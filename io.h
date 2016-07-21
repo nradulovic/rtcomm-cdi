@@ -12,6 +12,7 @@
 
 #include "base/bitop.h"
 
+
 /*
  *  MSB                         LSB
  * +---+---+---+---+---+---+---+---+
@@ -126,7 +127,7 @@
 /* Trigger signal is output on a pin
  * There are two available modes depending on the sample rate speed:
  *  - if sample speed is low (less than 15kSPS) then trigger rising edge is
- *  	generated just at the beginning of the samples read. After calculated
+ *  	generated just at the beginning of the sample read. After calculated
  *  	time a falling edge is generated through a hardware timer.
  *  - if sample speed is high (15-30 kSPS) then the rising edge is generated at
  *  	start of reading and the falling edge is generated at end of reading of
@@ -229,14 +230,6 @@ struct PORT_C_PACKED acq_sample
 
 
 PORT_C_INLINE
-void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel)
-{
-	sample->_channel[channel] = io_raw_adc_to_int(raw_data);
-}
-
-
-
-PORT_C_INLINE
 void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
 {
 	dst->_metadata = src->_metadata;
@@ -263,9 +256,7 @@ int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 PORT_C_INLINE
 void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 {
-	float * 					fvalue = (float *)&sample->_channel[channel];
-
-	*fvalue = value;
+	*(float *)&sample->_channel[channel] = value;
 }
 
 
