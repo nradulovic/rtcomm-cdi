@@ -183,7 +183,11 @@ struct PORT_C_PACKED acqunity_out
 
 struct PORT_C_PACKED acq_sample
 {
-    int32_t                     _channel[3];
+	union acq_sample_data
+	{
+		int32_t					idata;
+		float					fdata;
+	}							_channel[3];
     uint32_t                    _metadata;
 };
 
@@ -240,7 +244,7 @@ int32_t io_raw_adc_to_int(uint32_t raw_data)
 PORT_C_INLINE
 void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel)
 {
-	sample->_channel[channel] = io_raw_adc_to_int(raw_data);
+	sample->_channel[channel].idata = io_raw_adc_to_int(raw_data);
 }
 
 
@@ -256,7 +260,7 @@ void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
 PORT_C_INLINE
 void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 {
-	sample->_channel[channel] = value;
+	sample->_channel[channel].idata = value;
 }
 
 
@@ -264,7 +268,7 @@ void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 PORT_C_INLINE
 int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 {
-	return (sample->_channel[channel]);
+	return (sample->_channel[channel].idata);
 }
 
 
@@ -272,9 +276,7 @@ int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 PORT_C_INLINE
 void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 {
-	float * 					fvalue = (float *)&sample->_channel[channel];
-
-	*fvalue = value;
+	sample->_channel[channel].fdata = value;
 }
 
 
@@ -282,7 +284,7 @@ void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 PORT_C_INLINE
 float sample_get_float(const struct acq_sample * sample, uint32_t channel)
 {
-	return (*(const float *)&sample->_channel[channel]);
+	return (sample->_channel[channel].fdata);
 }
 
 
