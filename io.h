@@ -117,6 +117,7 @@
 #define ACQ_CHANNEL_X_MASK              (0x1u << 0)
 #define ACQ_CHANNEL_Y_MASK              (0x1u << 1)
 #define ACQ_CHANNEL_Z_MASK              (0x1u << 2)
+#define ACQ_CHANNEL_XYZ_MASK			(ACQ_CHANNEL_X_MASK | ACQ_CHANNEL_Y_MASK | ACQ_CHANNEL_Z_MASK)
 
 /*--  ACQUNITY command: CMD_SET_SYSTEM_CFG  ----------------------------------*/
 
