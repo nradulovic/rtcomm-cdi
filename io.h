@@ -10,8 +10,7 @@
 
 #include <stdint.h>
 
-#include "base/bitop.h"
-
+#include "cdi_rtcomm.h"
 
 /*
  *  MSB                         LSB
@@ -148,48 +147,22 @@
 #define ACQ_MODE_REQUEST				1
 
 
-struct PORT_C_PACKED acqunity_in
-{
-    uint8_t                     acq_channel_mask;
-    uint8_t                     acq_size;
-    uint8_t                     acq_status;
-    uint8_t                     acq_mux;
-    uint8_t                     acq_adcon;
-    uint8_t                     acq_drate;
-    uint8_t                     acq_gpio_io;
-    uint8_t                     acq_trig;
-    uint8_t                     aux_channel_no;
-    uint8_t                     aux_mux[4];
-    uint8_t                     aux_gpio_io;
-    int32_t                     range_hi[4];
-    int32_t                     range_lo[4];
-    uint32_t                    attack_time;
-    uint32_t                    pullback_time;
-};
 
-
-enum process_data_mode  // nacin prikaza prikupljenih podataka
-{
-    SERVICE_DATA,
-    USER_DATA,
-};
-
-
-struct PORT_C_PACKED acqunity_out
-{
-    uint32_t                    aux_val[4];
-    uint8_t                     status[4];
-};
-
-
-struct PORT_C_PACKED acq_sample
+struct __attribute__((packed)) acq_sample
 {
 	union acq_sample_data
 	{
-		int32_t					idata;
-		float					fdata;
+		int32_t						idata;
+		float						fdata;
 	}							_channel[3];
     uint32_t                    _metadata;
+};
+
+struct __attribute__((packed)) acq_buffer
+{
+    struct rtcomm_header        header;
+    struct acq_sample           sample[3000];
+    uint32_t                    aux[4];
 };
 
 
@@ -220,29 +193,27 @@ struct PORT_C_PACKED acq_sample
  *   TIMESTAMP - timestamp [25:0] - 26 bits
  */
 
-#define SAMPLE_GAIN_Pos					(29u)
-#define SAMPLE_GAIN_Mask				(0x7u << SAMPLE_GAIN_Pos)
-#define SAMPLE_TYPE_Pos					(26)
-#define SAMPLE_TYPE_Mask				(0x7u << SAMPLE_TYPE_Pos)
-#define SAMPLE_TIMESTAMP_Pos			(0)
-#define SAMPLE_TIMESTAMP_Mask			(0x3ffffffu << SAMPLE_TIMESTAMP_Pos)
+#define SAMPLE_GAIN_Pos					(0u)
+#define SAMPLE_GAIN_Mask				(0xffu << SAMPLE_GAIN_Pos)
+#define SAMPLE_TYPE_Pos					(8)
+#define SAMPLE_TYPE_Mask				(0xffu << SAMPLE_TYPE_Pos)
 
 #define SAMPLE_TYPE_INT					(0x0)
 #define SAMPLE_TYPE_FLOAT				(0x1)
 
+#if defined(PORT_C)
+#include "some_file.h"
 #define io_raw_adc_to_int(raw_data)		n_ext_i24((int32_t)(raw_data))
 
-
-
-PORT_C_INLINE
+static inline
 void sample_init(struct acq_sample * sample, uint32_t raw_data, uint32_t channel)
 {
 	sample->_channel[channel].idata = io_raw_adc_to_int(raw_data);
 }
 
+#endif
 
-
-PORT_C_INLINE
+static inline
 void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
 {
 	dst->_metadata = src->_metadata;
@@ -250,7 +221,7 @@ void sample_cpy_metadata(struct acq_sample * dst, const struct acq_sample * src)
 
 
 
-PORT_C_INLINE
+static inline
 void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 {
 	sample->_channel[channel].idata = value;
@@ -258,7 +229,7 @@ void sample_set_int(struct acq_sample * sample, int32_t value, uint32_t channel)
 
 
 
-PORT_C_INLINE
+static inline
 int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 {
 	return (sample->_channel[channel].idata);
@@ -266,7 +237,7 @@ int32_t sample_get_int(const struct acq_sample * sample, uint32_t channel)
 
 
 
-PORT_C_INLINE
+static inline
 void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 {
 	sample->_channel[channel].fdata = value;
@@ -274,7 +245,7 @@ void sample_set_float(struct acq_sample * sample, float value, uint32_t channel)
 
 
 
-PORT_C_INLINE
+static inline
 float sample_get_float(const struct acq_sample * sample, uint32_t channel)
 {
 	return (sample->_channel[channel].fdata);
@@ -282,10 +253,11 @@ float sample_get_float(const struct acq_sample * sample, uint32_t channel)
 
 
 
-PORT_C_INLINE
+static inline
 void sample_set_gain(struct acq_sample * sample, uint32_t gain)
 {
 	gain <<= SAMPLE_GAIN_Pos;
+    gain &= SAMPLE_GAIN_Mask;
 
 	sample->_metadata &= ~SAMPLE_GAIN_Mask;
 	sample->_metadata |= gain;
@@ -293,7 +265,7 @@ void sample_set_gain(struct acq_sample * sample, uint32_t gain)
 
 
 
-PORT_C_INLINE
+static inline
 uint32_t sample_get_gain(const struct acq_sample * sample)
 {
 	return (sample->_metadata >> SAMPLE_GAIN_Pos);
@@ -307,7 +279,7 @@ uint32_t sample_get_gain(const struct acq_sample * sample)
  * 				- SAMPLE_TYPE_INT
  * 				- SAMPLE_TYPE_FLOAT
  */
-PORT_C_INLINE
+static inline
 void sample_set_type(struct acq_sample * sample, uint32_t type)
 {
 	type <<= SAMPLE_TYPE_Pos;
@@ -325,29 +297,10 @@ void sample_set_type(struct acq_sample * sample, uint32_t type)
  *  @retval		SAMPLE_TYPE_INT
  *  @retval		SAMPLE_TYPE_FLOAT
  */
-PORT_C_INLINE
+static inline
 uint32_t sample_get_type(const struct acq_sample * sample)
 {
 	return ((sample->_metadata & SAMPLE_TYPE_Mask) >> SAMPLE_TYPE_Pos);
-}
-
-
-
-PORT_C_INLINE
-void sample_set_timestamp(struct acq_sample * sample, uint32_t timestamp)
-{
-	timestamp &= SAMPLE_TIMESTAMP_Mask;
-
-	sample->_metadata &= ~SAMPLE_TIMESTAMP_Mask;
-	sample->_metadata |= timestamp;
-}
-
-
-
-PORT_C_INLINE
-uint32_t sample_get_timestamp(const struct acq_sample * sample)
-{
-	return (sample->_metadata & SAMPLE_TIMESTAMP_Mask);
 }
 
 #endif /* APPLICATION_INCLUDE_ACQUNITY_COMMANDS_H_ */
