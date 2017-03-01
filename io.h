@@ -201,8 +201,8 @@ struct __attribute__((packed)) acq_buffer
 #define SAMPLE_TYPE_INT					(0x0)
 #define SAMPLE_TYPE_FLOAT				(0x1)
 
-#if defined(PORT_C)
-#include "some_file.h"
+#if defined(__ARM_ARCH_7EM__)
+#include "base/bitop.h"
 #define io_raw_adc_to_int(raw_data)		n_ext_i24((int32_t)(raw_data))
 
 static inline

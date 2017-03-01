@@ -142,7 +142,7 @@ void rtcomm_header_define_channel(struct rtcomm_header * hdr, uint32_t index,
 static inline
 void rtcomm_header_mod_elements(struct rtcomm_header * hdr, uint32_t index, uint32_t elements)
 {
-    hdr->c.channel[index].elements = elements;
+    hdr->c.channel[index].elements = (uint16_t)elements;
 }
 
 #endif /* APPLICATION_INCLUDE_CDI_CDI_RTCOMM_H_ */
