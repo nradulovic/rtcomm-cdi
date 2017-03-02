@@ -14,6 +14,13 @@
 
 #define RTCOMM_HEADER_MAGIC				0xdeadbeef
 
+struct __attribute__((packed)) rtcomm_stats
+{
+    uint32_t                    complete_err;
+    uint32_t                    transfer_err;
+    uint32_t                    skipped_err;
+};
+
 struct __attribute__((packed)) rtcomm_header_data
 {
     uint32_t					data_size;
@@ -23,6 +30,7 @@ struct __attribute__((packed)) rtcomm_header_data
     uint32_t					timestamp_ms;
     uint32_t					magic;
     uint32_t					crc;
+    struct rtcomm_stats         stats;
 };
 
 /*
@@ -100,8 +108,9 @@ void rtcomm_header_init(struct rtcomm_header * hdr)
 }
 
 static inline
-void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size, uint32_t channels,
-        uint32_t frame, uint32_t timestamp_s, uint32_t timestamp_ms)
+void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size,
+        uint32_t channels, uint32_t frame, uint32_t timestamp_s,
+        uint32_t timestamp_ms, const struct rtcomm_stats * stats)
 {
     hdr->h.header.data_size = data_size;
     hdr->h.header.channels = channels;
@@ -110,6 +119,7 @@ void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size, uint32_t
     hdr->h.header.timestamp_ms = timestamp_ms;
     hdr->h.header.magic = RTCOMM_HEADER_MAGIC;
     hdr->h.header.crc = 0;
+    hdr->h.header.stats = *stats;
 }
 
 static inline
