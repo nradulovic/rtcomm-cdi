@@ -143,10 +143,16 @@ bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size, uint
 }
 
 static inline
-void rtcomm_header_define_channel(struct rtcomm_header * hdr, uint32_t index,
+void rtcomm_header_define_channel(struct rtcomm_header * hdr,
           const struct rtcomm_channel_data * channel)
 {
-    memcpy(&hdr->c.channel[index], channel, sizeof(*channel));
+    uint32_t index = 0;
+
+    while (channel->name[0] != 0) {
+        memcpy(&hdr->c.channel[index], channel, sizeof(*channel));
+        index++;
+        channel++;
+    }
 }
 
 static inline
