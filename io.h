@@ -161,8 +161,8 @@ struct __attribute__((packed)) acq_sample
 struct __attribute__((packed)) acq_buffer
 {
     struct rtcomm_header        header;
-    struct acq_sample           sample[3000];
-    uint32_t                    aux[4];
+    int32_t                     sample[3000][ACQUNITY_ACQ_CHANNELS];
+    uint32_t                    aux[ACQUNITY_AUX_CHANNELS];
 };
 
 
