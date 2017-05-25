@@ -16,9 +16,9 @@
 
 struct __attribute__((packed)) rtcomm_stats
 {
-    uint32_t                    complete_err;
-    uint32_t                    transfer_err;
-    uint32_t                    skipped_err;
+	uint32_t                    complete_err;
+	uint32_t                    transfer_err;
+	uint32_t                    skipped_err;
 };
 
 struct __attribute__((packed)) rtcomm_header_data
@@ -26,11 +26,9 @@ struct __attribute__((packed)) rtcomm_header_data
     uint32_t					data_size;
     uint32_t                    channels;
     uint32_t					frame;
-    uint32_t					timestamp_s;
-    uint32_t					timestamp_ms;
     uint32_t					magic;
     uint32_t					crc;
-    struct rtcomm_stats         stats;
+    struct rtcomm_stats			stats;
 };
 
 /*
@@ -109,22 +107,19 @@ void rtcomm_header_init(struct rtcomm_header * hdr)
 
 static inline
 void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size,
-        uint32_t channels, uint32_t frame, uint32_t timestamp_s,
-        uint32_t timestamp_ms, const struct rtcomm_stats * stats)
+        uint32_t channels, uint32_t frame, const struct rtcomm_stats * stats)
 {
     hdr->h.header.data_size = data_size;
     hdr->h.header.channels = channels;
     hdr->h.header.frame = frame;
-    hdr->h.header.timestamp_s = timestamp_s;
-    hdr->h.header.timestamp_ms = timestamp_ms;
     hdr->h.header.magic = RTCOMM_HEADER_MAGIC;
     hdr->h.header.crc = 0;
     hdr->h.header.stats = *stats;
 }
 
 static inline
-bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size, uint32_t * channels,
-          uint32_t * frame, uint32_t * timestamp_s, uint32_t * timestamp_ms)
+bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size,
+		uint32_t * channels, uint32_t * frame)
 {
     if (hdr->h.header.magic != RTCOMM_HEADER_MAGIC) {
         return (false);
@@ -136,8 +131,6 @@ bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size, uint
     *data_size = hdr->h.header.data_size;
     *channels = hdr->h.header.channels;
     *frame = hdr->h.header.frame;
-    *timestamp_s = hdr->h.header.timestamp_s;
-    *timestamp_ms = hdr->h.header.timestamp_ms;
 
     return (true);
 }
@@ -156,7 +149,8 @@ void rtcomm_header_define_channel(struct rtcomm_header * hdr,
 }
 
 static inline
-void rtcomm_header_mod_elements(struct rtcomm_header * hdr, uint32_t index, uint32_t elements)
+void rtcomm_header_mod_elements(struct rtcomm_header * hdr, uint32_t index,
+		uint32_t elements)
 {
     hdr->c.channel[index].elements = (uint16_t)elements;
 }
