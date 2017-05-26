@@ -9,8 +9,6 @@
 #define APPLICATION_INCLUDE_CDI_CDI_RTCOMM_H_
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
 
 #define RTCOMM_HEADER_MAGIC				0xdeadbeef
 
