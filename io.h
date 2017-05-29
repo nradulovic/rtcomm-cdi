@@ -66,8 +66,8 @@ struct __attribute__((packed)) io_buffer
 {
     struct rtcomm_header        header;
     int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
+    int32_t                     aux[IO_AUX_CHANNELS];
     uint8_t						gain[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
-    uint32_t                    aux[IO_AUX_CHANNELS];
 };
 
 #endif /* CDI_IO_H_ */
