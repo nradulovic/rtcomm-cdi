@@ -21,8 +21,6 @@ struct __attribute__((packed)) rtcomm_stats
 
 /*
  * To each RTCOMM buffer the structure rtcomm_header is prepended to the data.
- *
- * The size of rtcomm_header is always 2048 bytes
  */
 struct __attribute__((packed)) rtcomm_header
 {
