@@ -37,7 +37,7 @@ void ctrl_header_pack(struct ctrl_header * hdr, uint32_t data_size)
 static inline
 bool ctrl_header_unpack(struct ctrl_header * hdr, uint32_t * data_size)
 {
-    if (hdr->magic != RTCOMM_HEADER_MAGIC) {
+    if (hdr->magic != CTRL_HEADER_MAGIC) {
         return (false);
     }
 
