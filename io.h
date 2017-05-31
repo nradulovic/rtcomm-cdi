@@ -1,17 +1,41 @@
 /*
- * acqunity_commands.h
+ *  teslameter_3mhx-fw - 2017
+ *
+ *  io.h (former acqunity_commands.h)
  *
  *  Created on: Jan 19, 2015
- *      Author: nenad
- */
+ * ----------------------------------------------------------------------------
+ *  This file is part of teslameter_3mhx-fw.
+ *
+ *  teslameter_3mhx-fw is free software: you can redistribute it and/or modify
+ *  it under the terms of the Lesser GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  teslameter_3mhx-fw is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with teslameter_3mhx-fw.  If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------- *//**
+ * @file
+ * @author      Nenad Radulovic
+ * @brief       Main file header
+ *********************************************************************//** @{ */
 
 #ifndef CDI_IO_H_
 #define CDI_IO_H_
+
+/*=========================================================  INCLUDE FILES  ==*/
 
 #include <stdint.h>
 
 #include "cdi_rtcomm.h"
 #include "cdi_ctrl.h"
+
+/*===============================================================  MACRO's  ==*/
 
 #define IO_ID							0x26
 #define IO_BUFF_SIZE              		3000
@@ -44,6 +68,12 @@
 
 #define IO_EN_AUTORANGE_DISABLED		0
 #define IO_EN_AUTORANGE_ENABLED			1
+
+/*------------------------------------------------------  C++ extern begin  --*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*============================================================  DATA TYPES  ==*/
 
 struct __attribute__((packed)) io_buffer
 {
@@ -108,4 +138,15 @@ struct __attribute__((packed)) io_ctrl_param
 	uint8_t						probe_gain;
 };
 
+/*======================================================  GLOBAL VARIABLES  ==*/
+/*===================================================  FUNCTION PROTOTYPES  ==*/
+/*--------------------------------------------------------  C++ extern end  --*/
+#ifdef __cplusplus
+}
+#endif
+
+/*================================*//** @cond *//*==  CONFIGURATION ERRORS  ==*/
+/** @endcond *//** @} *//** @} *//*********************************************
+ * END of io.h
+ ******************************************************************************/
 #endif /* CDI_IO_H_ */
