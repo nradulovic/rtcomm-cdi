@@ -94,6 +94,8 @@ struct __attribute__((packed)) io_ctrl_config
 	uint8_t						vgain3lo;
 	uint8_t						tgain4lo;
 	uint8_t						vgain4lo;
+	uint8_t						probe_mux_hi;
+	uint8_t						probe_mux_lo;
 };
 
 struct __attribute__((packed)) io_ctrl_param
