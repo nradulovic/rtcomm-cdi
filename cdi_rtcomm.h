@@ -43,13 +43,6 @@ extern "C" {
 #endif
 /*============================================================  DATA TYPES  ==*/
 
-struct __attribute__((packed)) rtcomm_stats
-{
-	uint32_t                    complete_err;
-	uint32_t                    transfer_err;
-	uint32_t                    skipped_err;
-};
-
 /*
  * To each RTCOMM buffer the structure rtcomm_header is prepended to the data.
  */
@@ -59,7 +52,6 @@ struct __attribute__((packed)) rtcomm_header
     uint32_t					frame;
     uint32_t					magic;
     uint32_t					crc;
-    struct rtcomm_stats			stats;
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
@@ -73,13 +65,12 @@ void rtcomm_header_init(struct rtcomm_header * hdr)
 
 static inline
 void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size,
-        uint32_t frame, const struct rtcomm_stats * stats)
+        uint32_t frame)
 {
     hdr->data_size = data_size;
     hdr->frame = frame;
     hdr->magic = RTCOMM_HEADER_MAGIC;
     hdr->crc = 0;
-    hdr->stats = *stats;
 }
 
 static inline
