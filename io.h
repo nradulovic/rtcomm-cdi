@@ -88,7 +88,7 @@ struct __attribute__((packed)) io_buffer
     }							param;
     struct __attribute__((packed)) io_stats_info
 	{
-    	uint8_t						ctrl_err;
+    	uint32_t					ctrl_err;
 	}							stats;
     int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
     int32_t                     aux[IO_AUX_CHANNELS];
