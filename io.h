@@ -88,7 +88,15 @@ struct __attribute__((packed)) io_buffer
     }							param;
     struct __attribute__((packed)) io_stats_info
 	{
-    	uint32_t					ctrl_err;
+    	uint32_t					total_errors;
+    	uint32_t					runtime_check_failed;
+    	uint32_t					ctrl_comm_err;
+    	uint32_t					ctrl_data_err;
+    	uint32_t					ads_err;
+    	uint32_t					no_resource_err;
+    	uint32_t					rtcomm_skipped_err;
+    	uint32_t					rtcomm_transfer_err;
+    	uint32_t					rtcomm_complete_err;
 	}							stats;
     int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
     int32_t                     aux[IO_AUX_CHANNELS];
