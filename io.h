@@ -75,36 +75,6 @@ extern "C" {
 #endif
 /*============================================================  DATA TYPES  ==*/
 
-struct __attribute__((packed)) io_buffer
-{
-    struct __attribute__((packed)) rtcomm_header
-    							header;
-    struct __attribute__((packed)) io_param_info
-    {
-    	uint8_t						en_autorange;
-    	uint8_t						vspeed;
-    	uint8_t						workmode;
-    	uint8_t						probe_gain;
-    }							param;
-    struct __attribute__((packed)) io_stats_info
-	{
-    	uint32_t					total_errors;
-    	uint32_t					runtime_check_failed;
-    	uint32_t					ctrl_comm_err;
-    	uint32_t					ctrl_data_err;
-    	uint32_t					ads_err;
-    	uint32_t					no_resource_err;
-    	uint32_t					rtcomm_skipped_err;
-    	uint32_t					rtcomm_transfer_err;
-    	uint32_t					rtcomm_complete_err;
-	}							stats;
-    int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
-    int32_t                     aux[IO_AUX_CHANNELS];
-    uint8_t						gain[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
-    struct __attribute__((packed)) rtcomm_footer
-    							footer;
-};
-
 struct __attribute__((packed)) io_ctrl_config
 {
 	struct __attribute__((packed)) ctrl_header
@@ -142,10 +112,38 @@ struct __attribute__((packed)) io_ctrl_param
 {
 	struct __attribute__((packed)) ctrl_header
 								header;
-	uint8_t						en_autorange;
-	uint8_t						vspeed;
-	uint8_t						workmode;
-	uint8_t						probe_gain;
+	struct __attribute__((packed)) ctrl_param_data
+	{
+		uint8_t						en_autorange;
+		uint8_t						vspeed;
+		uint8_t						workmode;
+		uint8_t						probe_gain;
+	}							data;
+};
+
+struct __attribute__((packed)) io_buffer
+{
+    struct __attribute__((packed)) rtcomm_header
+    							header;
+    struct __attribute__((packed)) ctrl_param_data
+    							param;
+    struct __attribute__((packed)) io_stats_info
+	{
+    	uint32_t					total_errors;
+    	uint32_t					runtime_check_failed;
+    	uint32_t					ctrl_comm_err;
+    	uint32_t					ctrl_data_err;
+    	uint32_t					ads_err;
+    	uint32_t					no_resource_err;
+    	uint32_t					rtcomm_skipped_err;
+    	uint32_t					rtcomm_transfer_err;
+    	uint32_t					rtcomm_complete_err;
+	}							stats;
+    int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
+    int32_t                     aux[IO_AUX_CHANNELS];
+    uint8_t						gain[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
+    struct __attribute__((packed)) rtcomm_footer
+    							footer;
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
@@ -156,6 +154,18 @@ struct __attribute__((packed)) io_ctrl_param
 #endif
 
 /*================================*//** @cond *//*==  CONFIGURATION ERRORS  ==*/
+
+/* NOTE:
+ * This declaration is not used anywhere in the code. It is only here to force
+ * the compiler to check if io_buffer size is divisible by 4. This requirement
+ * exists because we are sending the buffer using hardware DMA which may have
+ * limitations regarding data addressing.
+ *
+ * If the following line of code fails to compile, then the io_buffer has wrong
+ * number of bytes.
+ */
+extern uint8_t _assert_buffer_size[(sizeof(struct __attribute__((packed)) io_buffer) & 0x3) ? -1 : 1];
+
 /** @endcond *//** @} *//** @} *//*********************************************
  * END of io.h
  ******************************************************************************/
