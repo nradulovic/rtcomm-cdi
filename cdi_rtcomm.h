@@ -36,6 +36,7 @@
 /*===============================================================  MACRO's  ==*/
 
 #define RTCOMM_HEADER_MAGIC				0xdeadbeef
+#define RTCOMM_FOOTER_MAGIC				0xdeadbeed
 
 /*------------------------------------------------------  C++ extern begin  --*/
 #ifdef __cplusplus
@@ -54,6 +55,12 @@ struct __attribute__((packed)) rtcomm_header
     uint32_t					crc;
 };
 
+struct __attribute__((packed)) rtcomm_footer
+{
+	uint32_t					magic;
+	uint32_t					crc;
+};
+
 /*======================================================  GLOBAL VARIABLES  ==*/
 /*===================================================  FUNCTION PROTOTYPES  ==*/
 
@@ -61,6 +68,14 @@ static inline
 void rtcomm_header_init(struct rtcomm_header * hdr)
 {
     hdr->data_size = 0;
+}
+
+static inline
+void rtcomm_footer_pack(struct rtcomm_footer * ftr,
+		const struct rtcomm_header * hdr)
+{
+	ftr->magic = RTCOMM_FOOTER_MAGIC;
+	ftr->crc = ~hdr->crc;
 }
 
 static inline
@@ -88,6 +103,21 @@ bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size,
     *frame = hdr->frame;
 
     return (true);
+}
+
+static inline
+bool rtcomm_footer_unpack(struct rtcomm_footer * ftr,
+		const struct rtcomm_header * hdr)
+{
+	if (ftr->magic != RTCOMM_FOOTER_MAGIC) {
+		return (false);
+	}
+
+	if (hdr->crc != ftr->crc) {
+		return (false);
+	}
+
+	return (true);
 }
 
 /*--------------------------------------------------------  C++ extern end  --*/

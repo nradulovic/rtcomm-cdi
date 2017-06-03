@@ -101,6 +101,8 @@ struct __attribute__((packed)) io_buffer
     int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
     int32_t                     aux[IO_AUX_CHANNELS];
     uint8_t						gain[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
+    struct __attribute__((packed)) rtcomm_footer
+    							footer;
 };
 
 struct __attribute__((packed)) io_ctrl_config
