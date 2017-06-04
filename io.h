@@ -164,7 +164,7 @@ struct __attribute__((packed)) io_buffer
  * If the following line of code fails to compile, then the io_buffer has wrong
  * number of bytes.
  */
-extern uint8_t _assert_buffer_size[(sizeof(struct __attribute__((packed)) io_buffer) & 0x3) ? -1 : 1];
+extern int _assert_buffer_size[(sizeof(struct __attribute__((packed)) io_buffer) & 0x3) ? -1 : 1];
 
 /** @endcond *//** @} *//** @} *//*********************************************
  * END of io.h
