@@ -108,17 +108,20 @@ struct __attribute__((packed)) io_ctrl_config
 	uint8_t						probe_mux_lo;
 };
 
+struct __attribute__((packed)) ctrl_param_data
+{
+    uint8_t						en_autorange;
+    uint8_t						vspeed;
+    uint8_t						workmode;
+    uint8_t						probe_gain;
+};
+
 struct __attribute__((packed)) io_ctrl_param
 {
 	struct __attribute__((packed)) ctrl_header
 								header;
 	struct __attribute__((packed)) ctrl_param_data
-	{
-		uint8_t						en_autorange;
-		uint8_t						vspeed;
-		uint8_t						workmode;
-		uint8_t						probe_gain;
-	}							data;
+	                            data;
 };
 
 struct __attribute__((packed)) io_buffer
