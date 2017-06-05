@@ -113,7 +113,7 @@ bool rtcomm_footer_unpack(struct rtcomm_footer * ftr,
 		return (false);
 	}
 
-	if (hdr->crc != ftr->crc) {
+	if (hdr->crc != ~ftr->crc) {
 		return (false);
 	}
 
