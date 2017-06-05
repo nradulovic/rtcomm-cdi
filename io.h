@@ -143,8 +143,8 @@ struct __attribute__((packed)) io_buffer
     	uint32_t					rtcomm_complete_err;
 	}							stats;
     int32_t           			sample[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
-    int32_t                     aux[IO_AUX_CHANNELS];
     uint8_t						gain[IO_BUFF_SIZE][IO_PROBE_CHANNELS];
+    int32_t                     aux[IO_AUX_CHANNELS];
     struct __attribute__((packed)) rtcomm_footer
     							footer;
 };
