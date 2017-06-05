@@ -35,8 +35,8 @@
 
 /*===============================================================  MACRO's  ==*/
 
-#define RTCOMM_HEADER_MAGIC				0xdeadbeef
-#define RTCOMM_FOOTER_MAGIC				0xdeadbeed
+#define RTCOMM_HEADER_MAGIC             0xdeadbeef
+#define RTCOMM_FOOTER_MAGIC             0xdeadbeed
 
 /*------------------------------------------------------  C++ extern begin  --*/
 #ifdef __cplusplus
@@ -49,16 +49,16 @@ extern "C" {
  */
 struct __attribute__((packed)) rtcomm_header
 {
-    uint32_t					data_size;
-    uint32_t					frame;
-    uint32_t					magic;
-    uint32_t					crc;
+    uint32_t                    data_size;
+    uint32_t                    frame;
+    uint32_t                    magic;
+    uint32_t                    crc;
 };
 
 struct __attribute__((packed)) rtcomm_footer
 {
-	uint32_t					magic;
-	uint32_t					crc;
+    uint32_t                    magic;
+    uint32_t                    crc;
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
@@ -72,10 +72,10 @@ void rtcomm_header_init(struct rtcomm_header * hdr)
 
 static inline
 void rtcomm_footer_pack(struct rtcomm_footer * ftr,
-		const struct rtcomm_header * hdr)
+        const struct rtcomm_header * hdr)
 {
-	ftr->magic = RTCOMM_FOOTER_MAGIC;
-	ftr->crc = ~hdr->crc;
+    ftr->magic = RTCOMM_FOOTER_MAGIC;
+    ftr->crc = ~hdr->crc;
 }
 
 static inline
@@ -90,7 +90,7 @@ void rtcomm_header_pack(struct rtcomm_header * hdr, uint32_t data_size,
 
 static inline
 bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size,
-		uint32_t * frame)
+        uint32_t * frame)
 {
     if (hdr->magic != RTCOMM_HEADER_MAGIC) {
         return (false);
@@ -107,17 +107,17 @@ bool rtcomm_header_unpack(struct rtcomm_header * hdr, uint32_t * data_size,
 
 static inline
 bool rtcomm_footer_unpack(struct rtcomm_footer * ftr,
-		const struct rtcomm_header * hdr)
+        const struct rtcomm_header * hdr)
 {
-	if (ftr->magic != RTCOMM_FOOTER_MAGIC) {
-		return (false);
-	}
+    if (ftr->magic != RTCOMM_FOOTER_MAGIC) {
+        return (false);
+    }
 
-	if (hdr->crc != ~ftr->crc) {
-		return (false);
-	}
+    if (hdr->crc != ~ftr->crc) {
+        return (false);
+    }
 
-	return (true);
+    return (true);
 }
 
 /*--------------------------------------------------------  C++ extern end  --*/
