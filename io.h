@@ -69,6 +69,19 @@
 #define IO_EN_AUTORANGE_DISABLED		0
 #define IO_EN_AUTORANGE_ENABLED			1
 
+#define IO_VSPEED_10SPS                 1
+#define IO_VSPEED_30SPS                 4
+#define IO_VSPEED_50SPS                 5
+#define IO_VSPEED_60SPS                 6
+#define IO_VSPEED_100SPS                7
+#define IO_VSPEED_500SPS                8
+#define IO_VSPEED_1000SPS               9
+#define IO_VSPEED_2000SPS               10
+#define IO_VSPEED_3750SPS               11
+#define IO_VSPEED_7500SPS               12
+#define IO_VSPEED_15000SPS              13
+#define IO_VSPEED_30000SPS              14
+
 /*------------------------------------------------------  C++ extern begin  --*/
 #ifdef __cplusplus
 extern "C" {
