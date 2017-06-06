@@ -35,7 +35,7 @@
 
 /*===============================================================  MACRO's  ==*/
 
-#define CTRL_HEADER_MAGIC				0xdeadbeee
+#define CTRL_HEADER_MAGIC               0xdeadbeee
 
 /*------------------------------------------------------  C++ extern begin  --*/
 #ifdef __cplusplus
@@ -45,9 +45,9 @@ extern "C" {
 
 struct __attribute__((packed)) ctrl_header
 {
-    uint32_t					data_size;
-    uint32_t					magic;
-    uint32_t					crc;
+    uint32_t                    data_size;
+    uint32_t                    magic;
+    uint32_t                    crc;
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
